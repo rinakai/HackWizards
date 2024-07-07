@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-resizable/0.35.1/jquery-resizable.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .chart-container {
+            width: 600px;
+            height: 400px;
+            margin-bottom: 40px;
+            border: 1px solid #ccc;
+            resize: both;
+            overflow: auto;
+        }
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        #header {
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            background-color: #1b4841;
+            color: white;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chart-container" id="eventTypeContainer">
+        <canvas id="eventTypeChart"></canvas>
+    </div>
+
+    <div class="chart-container" id="eventCountContainer">
+        <canvas id="eventCountChart"></canvas>
+    </div>
+
+    <div class="chart-container" id="eventLocationContainer">
+        <canvas id="eventLocationChart"></canvas>
+    </div>
+
+    <script>
+        // Mockup data for Event Distribution by Type
+        const eventTypeData = {
+            labels: ['Food Festival', 'Music Concert', 'Tech Expo', 'Art Exhibition'],
+            datasets: [{
+                label: 'Event Count',
+                data: [5, 3, 4, 2],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+            }]
+        };
+
+        // Mockup data for Event Count Over Time
+        const eventCountData = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            datasets: [{
+                label: 'Event Count',
+                data: [1, 2, 3, 4, 2, 3, 5, 4, 3, 2, 1, 2],
+                backgroundColor: '#36A2EB',
+                borderColor: '#36A2EB',
+                fill: false
+            }]
+        };
+
+        // Mockup data for Geographical Distribution
+        const eventLocationData = {
+            labels: ['Kuala Lumpur', 'Kota Kinabalu', 'Melaka', 'Johor Bahru'],
+            datasets: [{
+                label: 'Event Count',
+                data: [5, 3, 2, 4],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+            }]
+        };
+
+        // Event Distribution by Type Chart
+        const ctx1 = document.getElementById('eventTypeChart').getContext('2d');
+        const eventTypeChart = new Chart(ctx1, {
+            type: 'doughnut',
+            data: eventTypeData
+        });
+
+        // Event Count Over Time Chart
+        const ctx2 = document.getElementById('eventCountChart').getContext('2d');
+        const eventCountChart = new Chart(ctx2, {
+            type: 'line',
+            data: eventCountData
+        });
+
+        // Geographical Distribution Chart
+        const ctx3 = document.getElementById('eventLocationChart').getContext('2d');
+        const eventLocationChart = new Chart(ctx3, {
+            type: 'bar',
+            data: eventLocationData
+        });
+
+        // Make charts resizable
+        $(document).ready(function() {
+            $('#eventTypeContainer').resizable({
+                resize: function() {
+                    eventTypeChart.resize();
+                }
+            });
+            $('#eventCountContainer').resizable({
+                resize: function() {
+                    eventCountChart.resize();
+                }
+            });
+            $('#eventLocationContainer').resizable({
+                resize: function() {
+                    eventLocationChart.resize();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

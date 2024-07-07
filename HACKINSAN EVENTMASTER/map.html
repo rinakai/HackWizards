@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Event Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #mapid {
+            height: 600px;
+        }
+        .popup-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .popup-form input, .popup-form textarea {
+            margin-bottom: 8px;
+            padding: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="mapid"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map and set its view to a central location
+        var map = L.map('mapid').setView([4.2105, 101.9758], 6);
+
+        // Add the tile layer from OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Mockup event data
+        var events = [
+            {
+                name: "Food Festival",
+                date: "2024-08-15",
+                time: "12:00",
+                location: [3.1390, 101.6869]  // Kuala Lumpur
+            },
+            {
+                name: "Music Concert",
+                date: "2024-09-20",
+                time: "18:00",
+                location: [5.9784, 116.0735]  // Kota Kinabalu
+            },
+            {
+                name: "Tech Expo",
+                date: "2024-07-30",
+                time: "09:00",
+                location: [2.1974, 102.2491]  // Melaka
+            },
+            {
+                name: "Art Exhibition",
+                date: "2024-10-10",
+                time: "10:00",
+                location: [1.4927, 103.7414]  // Johor Bahru
+            }
+        ];
+
+        // Function to create and add markers to the map
+        function addMarkers(eventData) {
+            eventData.forEach(function(event) {
+                var marker = L.marker(event.location).addTo(map)
+                    .bindPopup(createPopupContent(event));
+            });
+        }
+
+        // Function to create popup content with a button
+        function createPopupContent(event) {
+            return '<b>' + event.name + '</b><br>Date: ' + event.date + '<br>Time: ' + event.time + '<br>' +
+                   '<button onclick="viewAerialImage(' + event.location[0] + ',' + event.location[1] + ')">View Aerial Image</button>';
+        }
+
+        // Function to display a single mockup aerial image as a popup
+        function viewAerialImage(lat, lng) {
+            var imageUrl = 'aerial_building.jpg';  // Set the image source
+            var imagePopup = L.popup()
+                .setLatLng([lat, lng])
+                .setContent('<img src="' + imageUrl + '" style="width:300px;"/>')
+                .openOn(map);
+        }
+
+        // Add markers for mockup data
+        addMarkers(events);
+
+        // Function to create a form for event details
+        function createFormPopup(latlng) {
+            var formHtml = '<div class="popup-form">' +
+                '<label>Name of Event: <input type="text" id="eventName"></label>' +
+                '<label>Date of Event: <input type="date" id="eventDate"></label>' +
+                '<label>Time of Event: <input type="time" id="eventTime"></label>' +
+                '<label>Notes: <textarea id="eventNotes"></textarea></label>' +
+                '<button onclick="saveEvent(' + latlng[0] + ',' + latlng[1] + ')">Save Event</button>' +
+                '<button onclick="viewAerialImage(' + latlng[0] + ',' + latlng[1] + ')">View Aerial Image</button>' +
+                '</div>';
+            L.popup()
+                .setLatLng(latlng)
+                .setContent(formHtml)
+                .openOn(map);
+        }
+
+        // Function to save event details and add a marker
+        function saveEvent(lat, lng) {
+            var name = document.getElementById('eventName').value;
+            var date = document.getElementById('eventDate').value;
+            var time = document.getElementById('eventTime').value;
+            var notes = document.getElementById('eventNotes').value;
+
+            var event = {
+                name: name,
+                date: date,
+                time: time,
+                location: [lat, lng],
+                notes: notes
+            };
+
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup(createPopupContent(event))
+                .openPopup();
+        }
+
+        // Add click event to the map to add new events
+        map.on('click', function(e) {
+            createFormPopup([e.latlng.lat, e.latlng.lng]);
+        });
+    </script>
+</body>
+</html>
